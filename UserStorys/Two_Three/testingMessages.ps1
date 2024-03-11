@@ -1,8 +1,8 @@
-$iotHubName = "JannicHus2Hubp6alic2i4c6ha"
-$storageAccountName = "jannichus2p6alic2i4c6ha"
-$deviceId = "TestingDevice"
-$message = "Testing this Message"
-$containerName = "messages"
+$iotHubName = "<Iot Hub Name>"
+$storageAccountName = "<Storage Account Name>"
+$deviceId = "<Testing Device>"
+$message = "<Testing Message>"
+$containerName = "<container Name>"
 
 $destinationPath = "UserStorys\Two_Three\test.json"
 
