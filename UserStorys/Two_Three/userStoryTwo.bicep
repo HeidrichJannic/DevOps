@@ -3,7 +3,7 @@
 param textToReplaceSubtitleWith string = 'This is a default subtitle text.'
 param repositoryBranch string = 'main'
 
-param demoName string = '<DemoName>'
+param demoName string = '<Demo Name>'
 
 param location string = resourceGroup().location
 
@@ -14,8 +14,8 @@ param skuUnits int = 1
 param d2cPartitions int = 4
 
 // IoT Hub and Storage Account configuration
-var iotHubName = '${demoName}Hub${uniqueString(resourceGroup().id)}'
-var storageAccountName = '${toLower(demoName)}${uniqueString(resourceGroup().id)}'
+var iotHubName = '${demoName}Hub'
+var storageAccountName = '${toLower(demoName)}'
 var storageEndpoint = '${demoName}StorageEndpont'
 var storageContainerName = '${toLower(demoName)}results'
 
@@ -30,7 +30,6 @@ param runtime string = 'python'
 
 var functionAppName = demoName
 var hostingPlanName = demoName
-var applicationInsightsName = demoName
 var functionWorkerRuntime = runtime
 
 // Storage Account Creation
@@ -46,7 +45,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
   name: '${storageAccountName}/default/${storageContainerName}'
   properties: {
-    publicAccess: 'None'
+    publicAccess: 'Blob'
   }
   dependsOn: [
     storageAccount
@@ -86,7 +85,7 @@ resource IoTHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
         {
           name: 'ContosoStorageRoute'
           source: 'DeviceMessages'
-          condition: 'level="storage"'
+          condition: 'true'
           endpointNames: [
             storageEndpoint
           ]
@@ -171,10 +170,6 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
           value: '~10'
         }
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: applicationInsights.properties.InstrumentationKey
-        }
-        {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
         }
@@ -193,15 +188,5 @@ resource srcControls 'Microsoft.Web/sites/sourcecontrols@2023-01-01' = {
     repoUrl: 'https://github.com/HeidrichJannic/DevOps'
     branch:  repositoryBranch
     isManualIntegration: true
-  }
-}
-
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
-  location: location
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    Request_Source: 'rest'
   }
 }
